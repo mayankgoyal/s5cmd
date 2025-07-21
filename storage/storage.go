@@ -71,6 +71,7 @@ func NewRemoteClient(ctx context.Context, url *url.URL, opts Options) (*S3, erro
 		LogLevel:               opts.LogLevel,
 		bucket:                 url.Bucket,
 		region:                 opts.region,
+		IgnoreListTimestamp:    opts.IgnoreListTimestamp,
 	}
 	return newS3Storage(ctx, newOpts)
 }
@@ -97,6 +98,7 @@ type Options struct {
 	CredentialFile         string
 	bucket                 string
 	region                 string
+	IgnoreListTimestamp    bool
 }
 
 func (o *Options) SetRegion(region string) {

@@ -68,6 +68,7 @@ type S3 struct {
 	useListObjectsV1       bool
 	noSuchUploadRetryCount int
 	requestPayer           string
+	ignoreListTimestamp    bool
 }
 
 func (s *S3) RequestPayer() *string {
@@ -111,6 +112,7 @@ func newS3Storage(ctx context.Context, opts Options) (*S3, error) {
 		useListObjectsV1:       opts.UseListObjectsV1,
 		requestPayer:           opts.RequestPayer,
 		noSuchUploadRetryCount: opts.NoSuchUploadRetryCount,
+		ignoreListTimestamp:    opts.IgnoreListTimestamp,
 	}, nil
 }
 
@@ -343,7 +345,7 @@ func (s *S3) listObjectsV2(ctx context.Context, url *url.URL) <-chan *Object {
 				}
 
 				mod := aws.TimeValue(c.LastModified).UTC()
-				if mod.After(now) {
+				if !s.ignoreListTimestamp && mod.After(now) {
 					objectFound = true
 					continue
 				}
@@ -434,7 +436,7 @@ func (s *S3) listObjects(ctx context.Context, url *url.URL) <-chan *Object {
 				}
 
 				mod := aws.TimeValue(c.LastModified).UTC()
-				if mod.After(now) {
+				if !s.ignoreListTimestamp && mod.After(now) {
 					objectFound = true
 					continue
 				}

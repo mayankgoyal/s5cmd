@@ -90,6 +90,10 @@ var app = &cli.App{
 			Name:  "credentials-file",
 			Usage: "use the specified credentials file instead of the default credentials file",
 		},
+		&cli.BoolFlag{
+			Name:  "ignore-list-timestamp",
+			Usage: "ignore list timestamp when listing objects for S3",
+		},
 	},
 	Before: func(c *cli.Context) error {
 		retryCount := c.Int("retry-count")
@@ -190,6 +194,7 @@ func NewStorageOpts(c *cli.Context) storage.Options {
 		CredentialFile:         c.String("credentials-file"),
 		LogLevel:               log.LevelFromString(c.String("log")),
 		NoSuchUploadRetryCount: c.Int("no-such-upload-retry-count"),
+		IgnoreListTimestamp:    c.Bool("ignore-list-timestamp"),
 	}
 }
 
